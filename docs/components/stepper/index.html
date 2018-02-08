@@ -1,0 +1,53 @@
+---
+title: Stepper
+also:
+  elements/hx-accordion: <hx-accordion>
+  elements/hx-accordion-panel: <hx-accordion-panel>
+---
+{% extends 'component.njk' %}
+{% block content %}
+  <section id="vue-statusDemo">
+    <h2 class="hxSectionTitle" id="demo">Demo</h2>
+    <div class="hxRow">
+      <div class="hxCol hxSpan-9-xs">
+        <div class="demo status-demo">
+          <hx-accordion>
+            <hx-accordion-panel id="1" open="true">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 1</h4>
+            </header>
+            <p> I'm inside step 1 </p>
+            </hx-accordion-panel>
+            <hx-accordion-panel id="2" open="false">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 2</h4>
+            </header>
+            <p> I'm inside step 2, Lets test this! </p>
+            </hx-accordion-panel>
+          </hx-accordion>
+        </div>
+        {% code 'html' %}
+          {% raw %}
+          <hx-accordion selected="{{panel_id}}">
+            <hx-accordion-panel id="1" open>.....</hx-accordion-panel>
+          </hx-accordion>
+          {% endraw %}
+        {% endcode %}
+      </div>
+      <div class="hxCol hxSpan-3-xs">
+        <p>
+        Variant:
+        <select v-model="variant">
+          <option v-for="_variant in variants" :value="_variant">
+            {% raw %}{{ _variant.label }}{% endraw %}
+          </option>
+        </select>
+        </p>
+        <p>
+        Filled:
+        <input type="checkbox" v-model="isFilled">
+        </p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
