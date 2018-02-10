@@ -43,7 +43,7 @@
             { label: 'Popovers', path: 'popovers' },
             { label: 'Reveals', path: 'reveals' },
             { label: 'Status Pills', path: 'status-pills' },
-            { label: 'Stepper', path: 'stepper' },
+            { label: 'Steppers', path: 'steppers' },
             { label: 'Tables', path: 'tables' },
             { label: 'Tabs', path: 'tabs' },
             { label: 'Text Inputs', path: 'text-inputs' },

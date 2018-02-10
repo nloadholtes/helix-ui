@@ -1,14 +1,15 @@
 import { HXElement } from './HXElement';
+import debounce from 'lodash/debounce';
 import shadowStyles from './_hx-accordion-panel.less';
 
 const tagName = 'hx-accordion-panel';
 const template = document.createElement('template');
 template.innerHTML = `
-  
-  <hx-disclosure class="hxBtn" aria-controls="hx-accordian-body">
+  <style>${shadowStyles}</style>
+  <hx-disclosure class="hxBtn" aria-controls="hx-accordion-body">
     <slot name="header"></slot>
   </hx-disclosure>
-  <hx-reveal id="hx-accordian-body">
+  <hx-reveal id="hx-accordion-body">
     <slot></slot>
   </hx-reveal>
 `;
