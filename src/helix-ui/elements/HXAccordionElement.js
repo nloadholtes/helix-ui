@@ -6,14 +6,25 @@ export class HXAccordionElement extends HXElement {
     }
 
     static get observedAttributes () {
-        return [ 'selected' ];
+        return [ 'selectedPanel' ];
     }
 
     constructor () {
         super();
-        this.$panellist = this.querySelector('hx-accordion-panel');
-        console.log("debug .... "+ this.$panellist);
-        //this._onKeyUp = this._onKeyUp.bind(this);
-        //this._onTabClick = this._onTabClick.bind(this);
+    }
+
+    connectedCallback () {
+        var openedPanel = this.getAttribute('selectedPanel');
+        this._target = document.querySelector('hx-accordion-panel[id="'+openedPanel+'"]');
+        this._target.open=!this._target.open;
+    }
+
+    attributeChangedCallback (attr, oldVal, newVal) {
+      this._target = document.querySelector('hx-accordion-panel[id="'+oldVal+'"]');
+      this._target.open=!this._target.open;
+      // this._reveal = this.shadowRoot.querySelector('hx-reveal');
+      // this._reveal.setAttribute('aria-expanded', this.open);
+      // this._reveal.setAttribute('open', '');
+      console.log('Panel -attribute changed');
     }
 }

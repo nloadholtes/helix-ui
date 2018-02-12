@@ -11,25 +11,58 @@ also:
     <div class="hxRow">
       <div class="hxCol hxSpan-9-xs">
         <div class="demo status-demo">
-          <hx-accordion>
-            <hx-accordion-panel id="1" open="true">
+          <hx-accordion selectedPanel="A">
+            <hx-accordion-panel id="A" isFirstStep="true">
               <header slot="header">
                 <h4 class="hxContainerTitle">Step 1</h4>
             </header>
             <p> I'm inside step 1 </p>
+            <button class="hxBtn hxBtn--primary" goto="1"> next </button>
             </hx-accordion-panel>
-            <hx-accordion-panel id="2" open="false">
+            <hx-accordion-panel id="B">
               <header slot="header">
                 <h4 class="hxContainerTitle">Step 2</h4>
             </header>
             <p> I'm inside step 2, Lets test this! </p>
+            <button class="hxBtn"> previous </button>
+            <button class="hxBtn hxBtn--primary"> Next </button>
+            </hx-accordion-panel>
+            <hx-accordion-panel id="C">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 3</h4>
+            </header>
+            <p> I'm inside step 3, Last Step. Should submit this! </p>
+            <button class="hxBtn"> previous </button>
+            <button class="hxBtn hxBtn--primary"> Submit </button>
             </hx-accordion-panel>
           </hx-accordion>
         </div>
         {% code 'html' %}
           {% raw %}
-          <hx-accordion selected="{{panel_id}}">
-            <hx-accordion-panel id="1" open>.....</hx-accordion-panel>
+          <hx-accordion selectedPanel="2">
+            <hx-accordion-panel id="1">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 1</h4>
+            </header>
+            <p> I'm inside step 1 </p>
+            <button class="hxBtn hxBtn--primary" goto="1"> next </button>
+            </hx-accordion-panel>
+            <hx-accordion-panel id="2">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 2</h4>
+            </header>
+            <p> I'm inside step 2, Lets test this! </p>
+            <button class="hxBtn"> previous </button>
+            <button class="hxBtn hxBtn--primary"> Next </button>
+            </hx-accordion-panel>
+            <hx-accordion-panel id="3">
+              <header slot="header">
+                <h4 class="hxContainerTitle">Step 2</h4>
+            </header>
+            <p> I'm inside step 3, Final step! </p>
+            <button class="hxBtn"> previous </button>
+            <button class="hxBtn hxBtn--primary"> Submit </button>
+            </hx-accordion-panel>
           </hx-accordion>
           {% endraw %}
         {% endcode %}
