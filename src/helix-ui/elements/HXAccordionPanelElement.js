@@ -27,21 +27,30 @@ export class HXAccordionPanelElement extends HXElement {
     constructor () {
         super(tagName, template);
         this._toggle = this._toggle.bind(this);
+        this._isStepNavEnabled = true;
 
     }
     connectedCallback () {
         this.$upgradeProperty('open');
         this._target = this.shadowRoot.querySelector('hx-disclosure');
+        this._reveal = this.shadowRoot.querySelector('hx-reveal');
         if (!this._target) {
              return;
         }
-
+        if (this.parentElement.getAttribute('skipstep') === 'false'
+            && this.parentElement.getAttribute('selectedPanel') !== this.id) {
+            this._target.setAttribute('disabled', true);
+            this._reveal.setAttribute('disabled', true)
+            this._isStepNavEnabled = false;
+        }
         this._target.addEventListener('click', this._toggle);
+
     }
 
     attributeChangedCallback (attr, oldVal, newVal) {
       this._reveal = this.shadowRoot.querySelector('hx-reveal');
       this._reveal.setAttribute('aria-expanded', this.open);
+      this._isStepNavEnabled = true;
       this._reveal.setAttribute('open', '');
     }
 
@@ -53,13 +62,15 @@ export class HXAccordionPanelElement extends HXElement {
     }
 
     _toggle () {
-        this.open = !this.open;
+        if (this._isStepNavEnabled) {
+          this.open = !this.open;
+        }
     }
 
     set open (value) {
         if (value) {
             this.setAttribute('open', '');
-            this.parentElement.setAttribute('selectedPanel', this.id);
+            this._isStepNavEnabled && this.parentElement.setAttribute('selectedPanel', this.id);
         } else {
             this.removeAttribute('open');
         }

@@ -42,6 +42,11 @@ export class HXAccordionElement extends HXElement {
         this._oldReveal.removeAttribute('open');
         //reset the panelId variable
         this._openedPanelId = this._newPanelId;
+        //Enable the next step
+        this._newTarget = document.querySelector('hx-accordion-panel[id="'+this._openedPanelId+'"]');
+        this._newTarget.setAttribute('open', '');
+        this._newDisclosure = this._newTarget.shadowRoot.querySelector('hx-disclosure');
+        this._newDisclosure.removeAttribute('disabled');
       }
 
     }

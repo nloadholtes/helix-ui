@@ -11,21 +11,25 @@ also:
     <div class="hxRow">
       <div class="hxCol hxSpan-9-xs">
         <div class="demo status-demo">
-          <hx-accordion selectedPanel="A">
-            <hx-accordion-panel id="A" isFirstStep="true">
+          <hx-accordion
+            id="exampleStepper"
+            selectedPanel="A"
+            skipstep=true
+            >
+            <hx-accordion-panel id="A">
               <header slot="header">
                 <h4 class="hxContainerTitle">Step 1</h4>
             </header>
             <p> I'm inside step 1 </p>
-            <button class="hxBtn hxBtn--primary" goto="1"> next </button>
+            <button class="hxBtn hxBtn--primary" onclick="{ document.getElementById('exampleStepper').setAttribute('selectedPanel', 'B'); }"> next </button>
             </hx-accordion-panel>
             <hx-accordion-panel id="B">
               <header slot="header">
                 <h4 class="hxContainerTitle">Step 2</h4>
             </header>
             <p> I'm inside step 2, Lets test this! </p>
-            <button class="hxBtn"> previous </button>
-            <button class="hxBtn hxBtn--primary"> Next </button>
+            <button class="hxBtn" onclick="{ document.getElementById('exampleStepper').setAttribute('selectedPanel', 'A'); }"> previous </button>
+            <button class="hxBtn hxBtn--primary" onclick="{ document.getElementById('exampleStepper').setAttribute('selectedPanel', 'C'); }"> Next </button>
             </hx-accordion-panel>
             <hx-accordion-panel id="C">
               <header slot="header">
@@ -68,18 +72,12 @@ also:
         {% endcode %}
       </div>
       <div class="hxCol hxSpan-3-xs">
-        <p>
-        Variant:
-        <select v-model="variant">
-          <option v-for="_variant in variants" :value="_variant">
-            {% raw %}{{ _variant.label }}{% endraw %}
+        Position:
+        <select v-model="skipstep">
+          <option v-for="_skipstep in skipsteps" :value="_skipstep">
+            {% raw %}{{ _skipstep.label }}{% endraw %}
           </option>
         </select>
-        </p>
-        <p>
-        Filled:
-        <input type="checkbox" v-model="isFilled">
-        </p>
       </div>
     </div>
   </section>

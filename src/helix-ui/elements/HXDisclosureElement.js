@@ -65,6 +65,7 @@ export class HXDisclosureElement extends HXElement {
                 }
                 break;
         }
+
     }
 
     get expanded () {
