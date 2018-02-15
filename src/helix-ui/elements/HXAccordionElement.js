@@ -6,48 +6,82 @@ export class HXAccordionElement extends HXElement {
     }
 
     static get observedAttributes () {
-        return [ 'selectedPanel' ];
+        return [ 'current-step' ];
     }
 
     constructor () {
         super();
-        this._toggleStep = this._toggleStep.bind(this);
     }
 
     connectedCallback () {
-        this._openedPanelId = this.getAttribute('selectedPanel');
-        if (this._openedPanelId) {
-          this._target = document.querySelector('hx-accordion-panel[id="'+this._openedPanelId+'"]');
-          this._target.open=!this._target.open;
-          document.querySelector('hx-accordion').addEventListener('click', this._toggleStep)
+        this.$upgradeProperty('current-step');
+        this._allowMultiStep = !this.hasAttribute('current-step');
+        this._setupIds();
+        if (this.hasAttribute('current-step')) {
+          this.currentTab = Number(this.getAttribute('current-step')) || 0;
+        }
+
+    }
+
+    disconnectedCallback () {
+        this.steps.forEach(step => {
+            step.removeEventListener('click', this._onStepClick);
+        });
+    }
+
+    get currentTab () {
+        return this._currentTab || -1;
+    }
+
+    set currentTab (idx) {
+        if (isNaN(idx)) {
+            throw new TypeError(`'currentTab' expects an numeric index. Got ${typeof idx} instead.`);
+        }
+
+        this._currentTab = idx;
+
+        this.steps.forEach((item, stepIdx) => {
+            if (idx === stepIdx) {
+                item.current = true;
+                item.setAttribute('stepindex', 0);
+            } else {
+                item.current = false;
+                item.setAttribute('stepindex', -1);
+                item.blur();
+            }
+        });
+
+        this.steps.forEach((step, panelIdx) => {
+            step.open = (idx === panelIdx);
+        });
+    }//SET:currentTab
+
+    get steps () {
+        return Array.from(this.querySelectorAll('hx-accordion-panel'));
+    }
+
+    attributeChangedCallback (attr, oldValue, newVal) {
+        if (!isNaN(newVal)) {
+            this.currentTab = Number(newVal);
+        }
+        if (!this._allowMultiStep && oldValue && !isNaN(oldValue)) {
+          this.steps[oldValue].shadowRoot.querySelector('hx-reveal').removeAttribute('open');
+          this.steps[oldValue].shadowRoot.querySelector('hx-disclosure').setAttribute('aria-expanded', false);
         }
     }
 
-    attributeChangedCallback (attr, oldVal, newVal) {
-      this._target = document.querySelector('hx-accordion-panel[id="'+oldVal+'"]');
-      this._target.open=!this._target.open;
-      console.log('Panel -attribute changed');
-    }
+    _setupIds () {
+      this.steps.forEach((item, idx) => {
+        let stepId = `hx-accordion-panel-${this.$generateId()}`;
+        let stepDisclosureId = `accordion-disclosure-${this.$generateId()}`;
 
-    _toggleStep() {
-      this._newPanelId = this.getAttribute('selectedPanel');
-      if (this._openedPanelId !== this._newPanelId) {
-        this._oldTarget = document.querySelector('hx-accordion-panel[id="'+this._openedPanelId+'"]');
-        this._oldReveal = this._oldTarget.shadowRoot.querySelector('hx-reveal');
-        this._oldDisclosure = this._oldTarget.shadowRoot.querySelector('hx-disclosure');
-        //Close the old Panel
-        this._oldTarget.open=false;
-        this._oldReveal.setAttribute('aria-expanded', false);
-        this._oldDisclosure.setAttribute('aria-expanded', false);
-        this._oldReveal.removeAttribute('open');
-        //reset the panelId variable
-        this._openedPanelId = this._newPanelId;
-        //Enable the next step
-        this._newTarget = document.querySelector('hx-accordion-panel[id="'+this._openedPanelId+'"]');
-        this._newTarget.setAttribute('open', '');
-        this._newDisclosure = this._newTarget.shadowRoot.querySelector('hx-disclosure');
-        this._newDisclosure.removeAttribute('disabled');
-      }
+        if (item.hasAttribute('id')) {
+            stepId = item.getAttribute('id');
+        } else {
+            item.setAttribute('id', stepId);
+        }
 
-    }
+        item.setAttribute('aria-controls',stepId);
+      });
+    }//_setupIds
 }

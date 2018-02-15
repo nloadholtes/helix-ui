@@ -21,3 +21,16 @@ also:
     </hx-dl>
   </section>
 {% endblock %}
+
+{% block attributes %}
+  <dl>
+    <dt>current-step{Number=0}</dt>
+    <dd>
+      An optional attribute, Zero-based index of the currently active step and allows to open only one step at a time.
+      If not explicitly defined, allows to open multiple step at the same time.
+    </dd>
+
+    <dt>skipstep</dt>
+    <dd>Boolean value lets you to decide if the stepper can be skipped or not</dd>
+  </dl>
+{% endblock %}
