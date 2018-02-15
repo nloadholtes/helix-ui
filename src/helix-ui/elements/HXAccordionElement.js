@@ -18,15 +18,9 @@ export class HXAccordionElement extends HXElement {
         this._allowMultiStep = !this.hasAttribute('current-step');
         this._setupIds();
         if (this.hasAttribute('current-step')) {
-          this.currentTab = Number(this.getAttribute('current-step')) || 0;
+            this.currentTab = Number(this.getAttribute('current-step')) || 0;
         }
 
-    }
-
-    disconnectedCallback () {
-        this.steps.forEach(step => {
-            step.removeEventListener('click', this._onStepClick);
-        });
     }
 
     get currentTab () {
@@ -65,23 +59,22 @@ export class HXAccordionElement extends HXElement {
             this.currentTab = Number(newVal);
         }
         if (!this._allowMultiStep && oldValue && !isNaN(oldValue)) {
-          this.steps[oldValue].shadowRoot.querySelector('hx-reveal').removeAttribute('open');
-          this.steps[oldValue].shadowRoot.querySelector('hx-disclosure').setAttribute('aria-expanded', false);
+            this.steps[oldValue].shadowRoot.querySelector('hx-reveal').removeAttribute('open');
+            this.steps[oldValue].shadowRoot.querySelector('hx-disclosure').setAttribute('aria-expanded', false);
         }
     }
 
     _setupIds () {
-      this.steps.forEach((item, idx) => {
-        let stepId = `hx-accordion-panel-${this.$generateId()}`;
-        let stepDisclosureId = `accordion-disclosure-${this.$generateId()}`;
+        this.steps.forEach((item, idx) => {
+            let stepId = `hx-accordion-panel-${this.$generateId()}-${idx}`;
 
-        if (item.hasAttribute('id')) {
-            stepId = item.getAttribute('id');
-        } else {
-            item.setAttribute('id', stepId);
-        }
+            if (item.hasAttribute('id')) {
+                stepId = item.getAttribute('id');
+            } else {
+                item.setAttribute('id', stepId);
+            }
 
-        item.setAttribute('aria-controls',stepId);
-      });
+            item.setAttribute('aria-controls',stepId);
+        });
     }//_setupIds
 }

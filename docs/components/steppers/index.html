@@ -13,31 +13,42 @@ also:
         <div class="demo status-demo">
           <hx-accordion
             id="exampleStepper"
-            v-bind:current-step="counter"
+            v-bind:current-step="step"
             skipstep=true
-            >
+          >
             <hx-accordion-panel>
               <header slot="header">
-                <h4 class="hxContainerTitle">Step 1</h4>
-            </header>
-            <p> I'm inside step 1 </p>
-            <button class="hxBtn hxBtn--primary" v-on:click="counter += 1"> next </button>
+                <span class="stepHeader">
+                  <span class="stepperCounter">1</span>
+                  <h4 class="stepperTitle">Lets start here!</h4>
+                </span>
+              </header>
+              <p> I'm inside step 1 </p>
+              <button class="hxBtn hxBtn--primary" v-on:click="step += 1"> next </button>
             </hx-accordion-panel>
+            <hr>
             <hx-accordion-panel>
               <header slot="header">
-                <h4 class="hxContainerTitle">Step 2</h4>
-            </header>
-            <p> I'm inside step 2, Lets test this! </p>
-            <button class="hxBtn" v-on:click="counter -= 1"> previous </button>
-            <button class="hxBtn hxBtn--primary" v-on:click="counter += 1"> Next </button>
+                <span class="stepHeader">
+                  <span class="stepperCounter">2</span>
+                  <h4 class="stepperTitle">Enter your details</h4>
+                </span>
+              </header>
+              <p> I'm inside step 2, Lets test this! </p>
+              <button class="hxBtn" v-on:click="step -= 1"> previous </button>
+              <button class="hxBtn hxBtn--primary" v-on:click="step += 1"> Next </button>
             </hx-accordion-panel>
+            <hr>
             <hx-accordion-panel>
               <header slot="header">
-                <h4 class="hxContainerTitle">Step 3</h4>
-            </header>
-            <p> I'm inside step 3, Last Step. Should submit this! </p>
-            <button class="hxBtn" v-on:click="counter -= 1"> previous </button>
-            <button class="hxBtn hxBtn--primary"> Submit </button>
+                <span class="stepHeader">
+                  <span class="stepperCounter">3</span>
+                  <h4 class="stepperTitle">Review and submit</h4>
+                </span>
+              </header>
+              <p> I'm inside step 3, Last Step. Should submit this! </p>
+              <button class="hxBtn" v-on:click="step -= 1"> previous </button>
+              <button class="hxBtn hxBtn--primary"> Submit </button>
             </hx-accordion-panel>
           </hx-accordion>
         </div>
@@ -53,22 +64,22 @@ also:
                   <h4 class="hxContainerTitle">Step 1</h4>
                 </header>
                 <p> I'm inside step 1 </p>
-                <button class="hxBtn hxBtn--primary" v-on:click="counter += 1"> next </button>
+                <button class="hxBtn hxBtn--primary" @click="nextStep"> next </button>
               </hx-accordion-panel>
               <hx-accordion-panel>
                 <header slot="header">
                   <h4 class="hxContainerTitle">Step 2</h4>
                 </header>
                 <p> I'm inside step 2, Lets test this! </p>
-                <button class="hxBtn" v-on:click="counter -= 1"> previous </button>
-                <button class="hxBtn hxBtn--primary" v-on:click="counter += 1"> Next </button>
+                <button class="hxBtn" @click="previousStep"> previous </button>
+                <button class="hxBtn hxBtn--primary" @click="nextStep"> Next </button>
               </hx-accordion-panel>
               <hx-accordion-panel>
                 <header slot="header">
                   <h4 class="hxContainerTitle">Step 3</h4>
                 </header>
                 <p> I'm inside step 3, Last Step. Should submit this! </p>
-                <button class="hxBtn" v-on:click="counter -= 1"> previous </button>
+                <button class="hxBtn" @click="previousStep"> previous </button>
                 <button class="hxBtn hxBtn--primary"> Submit </button>
               </hx-accordion-panel>
             </hx-accordion>
