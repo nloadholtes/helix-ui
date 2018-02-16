@@ -10,7 +10,8 @@ also:
     <h2 class="hxSectionTitle" id="demo">Demo</h2>
     <div class="hxRow">
       <div class="hxCol hxSpan-9-xs">
-        <div class="demo status-demo">
+        <h5 class="demo-title"> One step at a time </h5>
+        <div class="demo">
           <hx-accordion
             id="exampleStepper"
             v-bind:current-step="step"
@@ -24,7 +25,7 @@ also:
                 </span>
               </header>
               <p> I'm inside step 1 </p>
-              <button class="hxBtn hxBtn--primary" v-on:click="step += 1"> next </button>
+              <button class="hxBtn hxBtn--primary" @click="nextStep"> next </button>
             </hx-accordion-panel>
             <hr>
             <hx-accordion-panel>
@@ -35,8 +36,8 @@ also:
                 </span>
               </header>
               <p> I'm inside step 2, Lets test this! </p>
-              <button class="hxBtn" v-on:click="step -= 1"> previous </button>
-              <button class="hxBtn hxBtn--primary" v-on:click="step += 1"> Next </button>
+              <button class="hxBtn" @click="previousStep"> previous </button>
+              <button class="hxBtn hxBtn--primary" @click="nextStep"> Next </button>
             </hx-accordion-panel>
             <hr>
             <hx-accordion-panel>
@@ -47,7 +48,49 @@ also:
                 </span>
               </header>
               <p> I'm inside step 3, Last Step. Should submit this! </p>
-              <button class="hxBtn" v-on:click="step -= 1"> previous </button>
+              <button class="hxBtn" @click="previousStep"> previous </button>
+              <button class="hxBtn hxBtn--primary"> Submit </button>
+            </hx-accordion-panel>
+          </hx-accordion>
+        </div>
+        <h4 class="demo-title">Allow multiple Steps :</h4>
+        <div class="demo stepper-demo">
+          <hx-accordion
+            id="exampleStepper"
+            skipstep=true
+          >
+            <hx-accordion-panel>
+              <header ref="panel-0" slot="header">
+                <span class="stepHeader">
+                  <span class="stepperCounter">1</span>
+                  <h4 class="stepperTitle">Lets start here!</h4>
+                </span>
+              </header>
+              <p> I'm inside step 1 </p>
+              <button class="hxBtn hxBtn--primary" @click="nextStep2"> next </button>
+            </hx-accordion-panel>
+            <hr>
+            <hx-accordion-panel>
+              <header ref="panel-1" slot="header">
+                <span class="stepHeader">
+                  <span class="stepperCounter">2</span>
+                  <h4 class="stepperTitle">Enter your details</h4>
+                </span>
+              </header>
+              <p> I'm inside step 2, Lets test this! </p>
+              <button class="hxBtn" @click="previousStep2"> previous </button>
+              <button class="hxBtn hxBtn--primary" @click="nextStep2"> Next </button>
+            </hx-accordion-panel>
+            <hr>
+            <hx-accordion-panel>
+              <header ref="panel-2" slot="header">
+                <span class="stepHeader">
+                  <span class="stepperCounter">3</span>
+                  <h4 class="stepperTitle">Review and submit</h4>
+                </span>
+              </header>
+              <p> I'm inside step 3, Last Step. Should submit this! </p>
+              <button class="hxBtn" @click="previousStep2"> previous </button>
               <button class="hxBtn hxBtn--primary"> Submit </button>
             </hx-accordion-panel>
           </hx-accordion>

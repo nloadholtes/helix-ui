@@ -65,7 +65,6 @@ export class HXDisclosureElement extends HXElement {
                 }
                 break;
         }
-
     }
 
     get expanded () {
@@ -79,7 +78,7 @@ export class HXDisclosureElement extends HXElement {
     get target () {
         if (!this._target) {
             let targetId = this.getAttribute('aria-controls');
-            this._target = this.getRootNode().getElementById(targetId);
+            this._target = document.getElementById(targetId);
         }
         return this._target;
     }
