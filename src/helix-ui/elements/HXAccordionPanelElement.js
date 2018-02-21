@@ -72,7 +72,8 @@ export class HXAccordionPanelElement extends HXElement {
 
     _disableStep () {
         if (this.parentElement.getAttribute('skipstep') === 'false'
-            && this.parentElement.getAttribute('current-step') !== this.id) {
+            && this.parentElement.getAttribute('current-step') !== this.id
+            && this._target && this._reveal ) {
             this._target.setAttribute('disabled', true);
             this._reveal.setAttribute('disabled', true);
             this._isStepNavEnabled = false;
