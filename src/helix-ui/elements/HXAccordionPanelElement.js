@@ -64,12 +64,10 @@ export class HXAccordionPanelElement extends HXElement {
 
     _onStepClick () {
         let accordianElement = this.parentElement;
-        if (!accordianElement._allowMultiStep) {
-            let selectedIndex = (isNaN(accordianElement.steps.indexOf(this)) ? 0
-                : accordianElement.steps.indexOf(this));
-            accordianElement.currentTab = selectedIndex;
-            accordianElement.setAttribute('current-step',selectedIndex);
-        }
+        let selectedIndex = (isNaN(accordianElement.steps.indexOf(this)) ? 0
+            : accordianElement.steps.indexOf(this));
+        accordianElement.currentTab = selectedIndex;
+        accordianElement.setAttribute('current-step',selectedIndex);
     }
 
     _disableStep () {
