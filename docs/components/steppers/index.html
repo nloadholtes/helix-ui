@@ -129,14 +129,6 @@ also:
           {% endraw %}
         {% endcode %}
       </div>
-      <div class="hxCol hxSpan-3-xs">
-        Position:
-        <select v-model="skipstep">
-          <option v-for="_skipstep in skipsteps" :value="_skipstep">
-            {% raw %}{{ _skipstep.label }}{% endraw %}
-          </option>
-        </select>
-      </div>
     </div>
   </section>
 {% endblock %}

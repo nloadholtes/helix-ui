@@ -17,9 +17,9 @@ export class HXAccordionElement extends HXElement {
         this.$upgradeProperty('current-step');
         this._allowMultiStep = !this.hasAttribute('current-step');
         this._setupIds();
-         if (this.hasAttribute('current-step')) {
-             this.currentTab = Number(this.getAttribute('current-step')) || 0;
-         }
+        if (this.hasAttribute('current-step')) {
+            this.currentTab = Number(this.getAttribute('current-step')) || 0;
+        }
 
         this.currentTab = this._allowMultiStep ? -1 : Number(this.getAttribute('current-step')) || 0;
 
@@ -57,19 +57,13 @@ export class HXAccordionElement extends HXElement {
     }
 
     attributeChangedCallback (attr, oldValue, newVal) {
-      if (!isNaN(newVal)) {
-          this.currentTab = Number(newVal);
-      }
+        if (!isNaN(newVal)) {
+            this.currentTab = Number(newVal);
+        }
         if (!this._allowMultiStep && oldValue && !isNaN(oldValue)) {
             this.steps[oldValue].shadowRoot.querySelector('hx-reveal').removeAttribute('open');
             this.steps[oldValue].shadowRoot.querySelector('hx-disclosure').setAttribute('aria-expanded', false);
-        } else if(oldValue && newVal &&
-             this.steps[newVal].shadowRoot.querySelector('hx-disclosure').getAttribute('aria-expanded') == 'true') {
-                this.steps[newVal].shadowRoot.querySelector('hx-reveal').removeAttribute('open');
-                this.steps[newVal].shadowRoot.querySelector('hx-disclosure').setAttribute('aria-expanded', false);
-
-        }
-
+        } 
     }
 
     _setupIds () {

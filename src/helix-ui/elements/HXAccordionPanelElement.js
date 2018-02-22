@@ -27,20 +27,26 @@ export class HXAccordionPanelElement extends HXElement {
         super(tagName, template);
         this._onStepClick = this._onStepClick.bind(this);
         this._onKeyUp = this._onKeyUp.bind(this);
-        this._isStepNavEnabled = true;
-
+        this.touched = false;
     }
+
     connectedCallback () {
         this.$upgradeProperty('current');
         this._target = this.shadowRoot.querySelector('hx-disclosure');
         this._reveal = this.shadowRoot.querySelector('hx-reveal');
+        this._index = this.parentElement.steps.indexOf(this);
         if (!this._target) {
             return;
         }
-        this._disableStep();
-        this._target.addEventListener('click', this._onStepClick);
-        this._target.addEventListener('keyup', this._onKeyUp);
-
+        if (this.parentElement.getAttribute('skipstep') === 'false'
+            && this.parentElement.getAttribute('current-step') < this._index) {
+            this._target.setAttribute('disabled', true);
+            this._isStepNavEnabled = false;
+        } else {
+            this._target.addEventListener('click', this._onStepClick);
+            this._target.addEventListener('keyup', this._onKeyUp);  
+            this._target.removeAttribute('disabled'); 
+        }
     }
 
     disconnectedCallback () {
@@ -52,14 +58,19 @@ export class HXAccordionPanelElement extends HXElement {
 
     attributeChangedCallback (attr, oldVal, newVal) {
         this.setAttribute('aria-selected', newVal !== null);
-        this._reveal = this.shadowRoot.querySelector('hx-reveal');
-        this._reveal.setAttribute('aria-expanded', this.open);
-        this._reveal.setAttribute('open', '');
+        if (!this.parentElement._allowMultiStep) {
+            this._reveal = this.shadowRoot.querySelector('hx-reveal');
+            this._reveal.setAttribute('aria-expanded', this.open);
+            this._reveal.setAttribute('open', '');
+        }
+        if (newVal && this._target && this._reveal) {
+            this._target.addEventListener('click', this._onStepClick);
+            this._target.addEventListener('keyup', this._onKeyUp);  
+            this._target.removeAttribute('disabled');
+        } 
         // did not work
         // this._target = this.shadowRoot.querySelector('hx-disclosure');
         // this._target.expanded=true;
-        this._disableStep();
-        this._isStepNavEnabled = true;
     }
 
     _onStepClick () {
@@ -68,12 +79,22 @@ export class HXAccordionPanelElement extends HXElement {
             : accordianElement.steps.indexOf(this));
         accordianElement.currentTab = selectedIndex;
         accordianElement.setAttribute('current-step',selectedIndex);
+        if (this.parentElement._allowMultiStep && this.touched
+            && Number(this.parentElement.getAttribute('current-step')) === this._index) {
+            this._reveal.setAttribute('aria-expanded', this.open);
+            this.open && this._reveal.removeAttribute('open');
+            this.touched = false;
+        } else {
+            this._reveal.setAttribute('aria-expanded', this.open);
+            this._reveal.setAttribute('open', '');
+            this.touched = true;
+        }
     }
 
     _disableStep () {
         if (this.parentElement.getAttribute('skipstep') === 'false'
-            && this.parentElement.getAttribute('current-step') !== this.id
-            && this._target && this._reveal ) {
+            && this.parentElement.getAttribute('current-step') !== this.index
+            && this._target && this._reveal) {
             this._target.setAttribute('disabled', true);
             this._reveal.setAttribute('disabled', true);
             this._isStepNavEnabled = false;
