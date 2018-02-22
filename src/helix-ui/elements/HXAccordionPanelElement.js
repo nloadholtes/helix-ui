@@ -6,7 +6,7 @@ const tagName = 'hx-accordion-panel';
 const template = document.createElement('template');
 template.innerHTML = `
   <style>${shadowStyles}</style>
-  <hx-disclosure aria-controls="hx-accordion-body">
+  <hx-disclosure id="hx-accordion-header" aria-controls="hx-accordion-body">
     <slot name="header"></slot>
   </hx-disclosure>
   <hx-reveal id="hx-accordion-body">

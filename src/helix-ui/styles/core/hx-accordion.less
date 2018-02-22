@@ -1,10 +1,66 @@
 hx-accordion {
+  display: block;
   text-decoration-color: #3b8fbf;
 
-  .hxContainerTitle {
+  .hxStepSelection {
     &:hover {
       color: @cyan-500;
       cursor: pointer;
     }
+  }
+}
+
+.hxStepHeader {
+  align-items: center;
+  display: flex;
+  &:hover {
+    .hxStepCounter {
+      background-color: #16b9d4;
+    }
+  }
+}
+
+.hxStepCounter {
+  align-items: center;
+  background-color: #0c7c84;
+  border-radius: 1.25rem;
+  color: #ffffff;
+  display: flex;
+  flex: 0 0 2.5rem;
+  font-size: 1.5rem;
+  height: 2.5rem;
+  justify-content: center;
+  margin-right: 1rem;
+  text-align: center;
+}
+
+.hxStepTitle {
+  flex: 0 0 40%;
+  font-size: 1.5rem;
+}
+
+.hxStepSelection {
+  flex: 1 1 auto;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.hxStepArrow {
+  flex: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.demo-title {
+  font-weight: 400;
+  font-size: 20px;
+  padding: 20px;
+}
+
+hx-accordion-panel {
+  border-top: 1px solid @gray-300;
+
+  header {
+    display: -webkit-inline-box;
+    cursor: pointer;
   }
 }
