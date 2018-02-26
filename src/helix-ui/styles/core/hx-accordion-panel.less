@@ -1,5 +1,18 @@
 hx-accordion-panel {
     display: block;
     padding: 24px 16px;
-    
+
+    &[disabled] {
+        .hxStepCounter {
+            background-color: #d8d8d8;
+            color: #757575;
+        }
+        &:hover {
+            .hxStepCounter {
+                background-color: #d8d8d8;
+            color: #757575;
+            }
+        }
+    }
 }
+

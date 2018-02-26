@@ -2,5 +2,18 @@
 @import "core/hx-disclosure";
 
 #hx-accordion-header {
-  display: block; 
+  display: inline-flex;
+  width: 100%; 
+
+  .hxStepSelection {
+    flex: 1 1 auto;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .hxStepArrow {
+    svg {
+      height: 17px;
+    }
+}
 }

@@ -58,9 +58,27 @@ hx-accordion {
 
 hx-accordion-panel {
   border-top: 1px solid @gray-300;
+  display: block;
+  padding: 24px 16px;
 
   header {
     display: -webkit-inline-box;
     cursor: pointer;
   }
+
+  &[disabled] {
+    .hxStepCounter {
+        background-color: #d8d8d8;
+        color: #757575;
+    }
+    &:hover {
+        .hxStepCounter {
+            background-color: #d8d8d8;
+        color: #757575;
+        }
+        header {
+          cursor: inherit;
+        }
+    }
+}
 }

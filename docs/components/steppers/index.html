@@ -17,33 +17,33 @@ also:
             v-bind:current-step="step"
             skipstep=false
           >
-            <hx-accordion-panel>
+            <hx-accordion-panel stepvalue={{stepValue}} >
               <header slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">1</span>
                 <h4 class="hxStepTitle">Lets start here!</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
-              <p> I'm inside step 1 </p>
-              <button class="hxBtn hxBtn--primary" @click="nextStep"> next </button>
+              <p>
+                <label>
+                    Enter step Name :
+                    <input type="text" id="stepName" v-model="stepValue" />
+                </label>
+              </p>
+
+              <button class="hxBtn hxBtn--primary" @click="nextStepBindStepValue"> next </button>
             </hx-accordion-panel>
-            <hx-accordion-panel>
+            <hx-accordion-panel stepvalue="Acme Corp Inc 2">
               <header slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">2</span>
                 <h4 class="hxStepTitle">Enter your details</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
               <p> I'm inside step 2, Lets test this! </p>
               <button class="hxBtn" @click="previousStep"> previous </button>
               <button class="hxBtn hxBtn--primary" @click="nextStep"> Next </button>
             </hx-accordion-panel>
-            <hx-accordion-panel>
+            <hx-accordion-panel stepName="Acme Corp Inc32">
               <header slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">3</span>
                 <h4 class="hxStepTitle">Review and submit</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
               <p> I'm inside step 3, Last Step. Should submit this! </p>
               <button class="hxBtn" @click="previousStep"> previous </button>
@@ -55,35 +55,29 @@ also:
         <div class="demo stepper-demo">
           <hx-accordion
             id="exampleStepper"
-            skipstep=true
+            skipstep=false
           >
-            <hx-accordion-panel>
+            <hx-accordion-panel stepName="Acme Corp Inc." >
               <header ref="panel-0" slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">1</span>
                 <h4 class="hxStepTitle">Lets start here!</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
               <p> I'm inside step 1 </p>
               <button class="hxBtn hxBtn--primary" @click="nextStep2"> next </button>
             </hx-accordion-panel>
-            <hx-accordion-panel>
+            <hx-accordion-panel stepName="Acme Corp Inc. 2" >
               <header ref="panel-1" slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">2</span>
                 <h4 class="hxStepTitle">Enter your details</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
               <p> I'm inside step 2, Lets test this! </p>
               <button class="hxBtn" @click="previousStep2"> previous </button>
               <button class="hxBtn hxBtn--primary" @click="nextStep2"> Next </button>
             </hx-accordion-panel>
-            <hx-accordion-panel>
+            <hx-accordion-panel stepName="Acme Corp Inc. 3" >
               <header ref="panel-2" slot="header" class="hxStepHeader">
                 <span class="hxStepCounter">3</span>
                 <h4 class="hxStepTitle">Review and submit</h4>
-                <span class="hxStepSelection"> Acme Corp Inc.</span>
-                <hx-icon class="hxStepArrow" type="angle-down"></hx-icon>
               </header>
               <p> I'm inside step 3, Last Step. Should submit this! </p>
               <button class="hxBtn" @click="previousStep2"> previous </button>
