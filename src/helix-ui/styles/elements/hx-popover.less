@@ -1,9 +1,6 @@
 @import (reference) "components/typography";
 
 hx-popover {
-  background-color: @gray-0;
-  border: solid 1px @gray-300;
-  box-shadow: @layering-shadow;
   color: @gray-900;
   display: none; // hide by default
   flex-direction: column;
@@ -14,14 +11,14 @@ hx-popover {
 
   &[open] {
     display: flex;
-    margin: 0; // prevent margin from shifting element location
+    margin: 0 !important; // prevent margin from shifting position
   }
 
   > header {
     &:extend(.hxHeading-4);
     flex-shrink: 0;
     order: 1;
-    padding: 1.25rem 1.25rem 0 1.25rem;
+    padding: 1.25rem;
   }
 
   > hx-div {
@@ -29,13 +26,17 @@ hx-popover {
     max-height: 20rem; //~320px
     order: 2;
     overflow: hidden;
-    padding: 1.25rem;
+    padding: 0 1.25rem;
+
+    &:only-child {
+      padding: 1.25rem;
+    }
   }
 
   > footer {
     flex-shrink: 0;
     order: 3;
-    padding: 0 1.25rem 1.25rem;
+    padding: 1.25rem;
 
     // TODO: replace with .hxBtnSet
     .hxBtn + .hxBtn {
@@ -52,6 +53,10 @@ hx-popover {
 
   > hx-div {
     &:extend(hx-popover > hx-div);
+
+    &:only-child {
+      &:extend(hx-popover > hx-div:only-child);
+    }
   }
 
   > footer {
@@ -67,6 +72,7 @@ hx-popover {
 
   & > &-body {
     &:extend(hx-popover > hx-div);
+    overflow-y: auto;
   }
 
   & > &-foot {

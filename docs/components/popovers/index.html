@@ -25,17 +25,13 @@ also:
         </form>
       </header>
 
-      <div
-        v-for="_position in positions"
-        v-if="_position.value === position.value"
-      >
+      <div>
         <hx-disclosure aria-controls="demoPopover" class="hxBtn">
           Toggle
         </hx-disclosure>
 
         <hx-popover
           id="demoPopover"
-          :key="position.label"
           :position="position.value"
         >
           <header>

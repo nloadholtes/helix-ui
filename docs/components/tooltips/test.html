@@ -12,14 +12,9 @@ title: Testing - Tooltips
   </section>
 
   <section>
-    <h2>Appearance</h2>
+    <h2>Appearance (simple)</h2>
     <div class="tooltip-appearance">
-      {% for _position in [
-        'top', 'top-left', 'top-right',
-        'bottom', 'bottom-left', 'bottom-right',
-        'right', 'right-top', 'right-bottom',
-        'left', 'left-top', 'left-bottom'
-      ] %}
+      {% for _position in data.positions.withArrow %}
         <hx-tooltip open position="{{_position}}">
           {{_position}}
         </hx-tooltip>
@@ -28,12 +23,72 @@ title: Testing - Tooltips
   </section>
 
   <section>
-    <h2>Unconventional HTML5-compatible ID</h2>
-    <p>
-      <span data-tooltip="2d90208e58f24216be64de517570c628">
-        <code>data-tooltip="2d90208e58f24216be64de517570c628"</code>
-      </span>
-      <hx-tooltip id="2d90208e58f24216be64de517570c628">Do you like my hat?</hx-tooltip>
-    </p>
+    <h2>Appearance (formatted)</h2>
+    <div class="tooltip-appearance">
+      <hx-tooltip open position="right-bottom">
+        <header>Tooltip Header</header>
+        <p>
+          After inspecting the rear, driver-side battery injector,
+          we discovered that the <b>AC condenser</b> of the previous
+          gear isn't activating near the horn.
+        </p>
+      </hx-tooltip>
+    </div>
+  </section>
+
+  <section>
+    <h2>Unconventional HTML5-compatible IDs</h2>
+
+    <div class="hxRow hxAuto">
+      <div class="hxCol">
+        <h3>ID on Target</h3>
+        <p>
+          <span id="000c075715ed46eb61242f85e80aaaa1">Hover Here</span>
+          <hx-tooltip for="000c075715ed46eb61242f85e80aaaa1">
+            Do you like my hat?
+          </hx-tooltip>
+        </p>
+      </div>
+      <div class="hxCol">
+        <h3>ID on Tooltip</h3>
+        <p>
+          <span id="html-tip-2">Hover Here</span>
+          <hx-tooltip
+            id="100d90208e58f24216be64de517bbbb2"
+            for="html-tip-2"
+          >
+            Do you like my hat?
+          </hx-tooltip>
+        </p>
+      </div>
+      <div class="hxCol">
+        <h3>ID on Both Tooltip and Target</h3>
+        <p>
+          <span id="200c075715ed46eb61242f85e80cccc3">Hover Here</span>
+          <hx-tooltip
+            for="200c075715ed46eb61242f85e80cccc3"
+            id="200d90208e58f24216be64de517dddd3"
+          >
+            Do you like my hat?
+          </hx-tooltip>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Multiple Tooltips in Near Proximity</h2>
+    <table class="hxTable hxTable--condensed">
+      <tbody>
+        {% for i in range(0, 5) -%}
+        <tr>
+          <td>
+            <hx-icon type="info-circle" id="tgtProximity{{i}}"></hx-icon>
+            <hx-tooltip for="tgtProximity{{i}}" position="right">Tooltip Message</hx-tooltip>
+          </td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
   </section>
 {% endblock %}

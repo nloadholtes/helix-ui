@@ -3,8 +3,83 @@
   flex-wrap: wrap;
   z-index: 0;
 
-  hx-tooltip {
+  > hx-tooltip {
     margin: 1.25rem;
     position: relative;
+  }
+
+  &.vertical {
+    flex-direction: column;
+
+    [position^="left"] {
+      align-self: flex-end;
+    }
+  }
+}
+
+.positions {
+  &.demo {
+    display: grid;
+    //width: 100%;
+
+    [position] {
+      position: relative;
+    }
+  }
+
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    '.    top    .'
+    'left center right'
+    '.    bottom .';
+
+  > div {
+    display: flex;
+    //justify-content: space-between;
+  }
+
+  &__element {
+    align-items: center;
+    border: @demo-container-border;
+    //display: flex;
+    grid-area: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &__top,
+  &__bottom {
+    [position] + [position] {
+      margin-left: 1rem;
+    }
+  }
+
+  &__left,
+  &__right {
+    flex-direction: column;
+    [position] + [position] {
+      margin-top: 1rem;
+    }
+  }
+
+  &__top {
+    grid-area: top;
+    align-items: flex-end;
+  }
+
+  &__right {
+    grid-area: right;
+    align-items: flex-start;
+  }
+
+  &__bottom {
+    grid-area: bottom;
+    align-items: flex-start;
+  }
+
+  &__left {
+    grid-area: left;
+    align-items: flex-end;
   }
 }

@@ -1,8 +1,25 @@
-import { HXElement } from './HXElement';
-import { getPositionWithArrow } from '../utils/position';
 import debounce from 'lodash/debounce';
+
+import { HXElement } from './HXElement';
+import { KEYS } from '../utils';
+import { Position, getPositionWithArrow } from '../utils/position';
+
 import shadowMarkup from './HXTooltipElement.html';
 import shadowStyles from './HXTooltipElement.less';
+
+const DELAY = 500;
+const DEFAULT_POSITION = 'top';
+
+/*
+ * ADDED:
+ *  - added support for ALL possible positions of a tooltip
+ *    (added "-start" and "-end" varieties)
+ *
+ * BREAKING:
+ *  - remove click-to-open behavior
+ *  - remove `.triggerEvent` prop and `[trigger-event]` attr
+ *  - [role="tooltip"] ALWAYS!
+ */
 
 /**
  * Fires when the element's contents are concealed.
@@ -39,80 +56,83 @@ export class HXTooltipElement extends HXElement {
     }
 
     $onCreate () {
-        this._onShow = this._onShow.bind(this);
-        this._onHide = this._onHide.bind(this);
-        this._onClick = this._onClick.bind(this);
-        this._setPosition = this._setPosition.bind(this);
-        this._onDocumentClick = this._onDocumentClick.bind(this);
+        this._onCtrlBlur = this._onCtrlBlur.bind(this);
+        this._onCtrlFocus = this._onCtrlFocus.bind(this);
+        this._onCtrlMouseLeave = this._onCtrlMouseLeave.bind(this);
+        this._onCtrlMouseEnter = this._onCtrlMouseEnter.bind(this);
+        this._onDocumentScroll = this._onDocumentScroll.bind(this);
+        this._onKeyUp = this._onKeyUp.bind(this);
+        this._onWindowResize = debounce(this._reposition, 100);
+        this._reposition = this._reposition.bind(this);
+        this.id = this.id || `tip-${this.$generateId()}`; // What if id is blank?
     }
 
     $onConnect () {
-        this.$defaultAttribute('position', 'top');
-        this.initialPosition = this.position;
+        // property upgrades
         this.$upgradeProperty('open');
-        this.$defaultAttribute('role', 'tooltip');
+        this.$upgradeProperty('for');
+        this.$upgradeProperty('position');
+        this.$upgradeProperty('relativeTo');
 
+        // attribute configuration
+        this.$defaultAttribute('position', DEFAULT_POSITION);
         this.setAttribute('aria-hidden', !this.open);
-
-        if (this.id) {
-            this._target = this.getRootNode().querySelector(`[data-tooltip="${this.id}"]`);
-        } else {
-            return;
-        }
-        this._connectHandlers();
+        this.setAttribute('role', 'tooltip');
     }
 
     $onDisconnect () {
-        if (!this._target) {
-            return;
-        }
-        this._destroyHandlers();
+        this._detachListeners();
     }
 
     static get $observedAttributes () {
-        return [ 'open' ];
+        return [
+            'for',
+            'open',
+            'position',
+        ];
     }
 
     $onAttributeChange (attr, oldVal, newVal) {
-        if (attr === 'open') {
-            let isOpen = (newVal !== null);
-            this.setAttribute('aria-hidden', !isOpen);
-            this.$emit(isOpen ? 'open' : 'close');
+        switch (attr) {
+            case 'for':
+                this._attrForChange(oldVal, newVal);
+                break;
+
+            case 'open':
+                this._attrOpenChange(oldVal, newVal);
+                break;
+
+            case 'position':
+                this._initialPosition = newVal;
+                this._position = newVal;
+                break;
         }
     }
 
     /**
-     * Where to position the menu in relation to its reference element.
+     * External element that controls tooltip visibility.
      *
-     * @default "top"
-     * @type {PositionString}
+     * @readonly
+     * @returns {HTMLElement|Null}
      */
-    get position () {
-        return this.getAttribute('position');
-    }
-    set position (value) {
-        if (value) {
-            this.setAttribute('position', value);
-        } else {
-            this.removeAttribute('position');
+    get controlElement () {
+        if (this._controlElement) {
+            return this._controlElement;
         }
+
+        return this.getRootNode().getElementById(this.for);
     }
 
     /**
-     * Event that will trigger the appearance of the tooltip.
+     * ID for element that controls appearance of tooltip
      *
-     * @default "mouseenter"
      * @type {String}
      */
-    get triggerEvent () {
-        return this.getAttribute('trigger-event');
+    get for () {
+        return this.getAttribute('for');
     }
-    set triggerEvent (value) {
-        if (value) {
-            this.setAttribute('trigger-event', value);
-        } else {
-            this.removeAttribute('trigger-event');
-        }
+    set for (value) {
+        this.setAttribute('for', value);
     }
 
     /**
@@ -127,79 +147,274 @@ export class HXTooltipElement extends HXElement {
     set open (value) {
         if (value) {
             this.setAttribute('open', '');
-            this._setPosition();
         } else {
             this.removeAttribute('open');
-            this.position = this.initialPosition;
         }
     }
 
-    /** @private */
-    _connectHandlers () {
-        window.addEventListener('resize', debounce(this._setPosition,100));
-        if (this.triggerEvent === 'click') {
-            document.addEventListener('click', this._onDocumentClick);
-            this._target.addEventListener('click', this._onClick);
+    /**
+     * Where to position the menu in relation to its reference element.
+     *
+     * @default "top"
+     * @type {PositionString}
+     */
+    get position () {
+        return this.getAttribute('position');
+    }
+    set position (value) {
+        this.setAttribute('position', value);
+    }
+
+    /**
+     * Reference element used to calculate tooltip position.
+     *
+     * @readonly
+     * @type {HTMLElement}
+     */
+    get relativeElement () {
+        if (this.relativeTo) {
+            return this.getRootNode().getElementById(this.relativeTo);
         } else {
-            this._target.addEventListener('focus', this._onShow);
-            this._target.addEventListener('blur', this._onHide);
-            this._target.addEventListener('mouseenter', this._onShow);
-            this._target.addEventListener('mouseleave', this._onHide);
+            return this.controlElement;
+        }
+    }
+
+    /**
+     * ID of an element to relatively position the tooltip against.
+     *
+     * @type {String}
+     */
+    get relativeTo () {
+        return this.getAttribute('relative-to');
+    }
+    set relativeTo (value) {
+        this.setAttribute('relative-to', value);
+    }
+
+    /** @private */
+    get _elRoot () {
+        return this.shadowRoot.getElementById('hxTooltip');
+    }
+
+    /**
+     * Position of the arrow in ShadowDOM
+     * @private
+     * @returns {String}
+     */
+    get _position () {
+        return this._elRoot.getAttribute('position');
+    }
+    set _position (value) {
+        this._elRoot.setAttribute('position', value);
+    }
+
+    /** @private */
+    _attachListeners () {
+        if (this._controlElement) {
+            this._enableFocusEvents(this._controlElement);
+            this._enableMouseEvents(this._controlElement);
+
+            //this._controlElement.addEventListener('focus', this._onCtrlFocus);
+            //this._controlElement.addEventListener('mouseenter', this._onCtrlMouseEnter);
         }
     }
 
     /** @private */
-    _destroyHandlers () {
-        window.removeEventListener('resize', debounce(this._setPosition,100));
-        document.removeEventListener('click', this._onDocumentClick);
-        this._target.removeEventListener('focus', this._onShow);
-        this._target.removeEventListener('blur', this._onHide);
-        this._target.removeEventListener('mouseenter', this._onShow);
-        this._target.removeEventListener('mouseleave', this._onHide);
-        this._target.removeEventListener('click', this._onClick);
+    _attrForChange () {
+        // detach listeners from old control element
+        this._detachListeners();
+
+        // re-memoize control element
+        delete this._controlElement;
+        this._controlElement = this.controlElement;
+
+        this._makeControlAccessible();
+
+        // attach listeners to new control element
+        this._attachListeners();
     }
 
     /** @private */
-    _setPosition () {
-        var offset = getPositionWithArrow(this, this._target, { 'position': this.position });
-        this.style.top = `${offset.y}px`;
-        this.style.left = `${offset.x}px`;
-        this.position = offset.position;
-    }
+    _attrOpenChange (oldVal, newVal) {
+        let isOpen = (newVal !== null);
+        this.setAttribute('aria-hidden', !isOpen);
+        this.$emit(isOpen ? 'open' : 'close');
 
-    /** @private */
-    _onHide () {
-        if (this._showTimer) {
-            clearTimeout(this._showTimer);
+        if (isOpen) {
+            document.addEventListener('scroll', this._onDocumentScroll);
+            window.addEventListener('resize', this._onWindowResize);
+            this._reposition();
+        } else {
+            document.removeEventListener('scroll', this._onDocumentScroll);
+            window.removeEventListener('resize', this._onWindowResize);
         }
-        this._onHideTimer = setTimeout(() => {
+    }
+
+    /**
+     * Returns true if a control element is present and active/focused.
+     * @private
+     * @returns {Boolean}
+     */
+    get _ctrlHasFocus () {
+        if (!this._controlElement) {
+            console.log('control is NOT focused');
+            return false;
+        }
+
+        let res = (this.getRootNode().activeElement === this._controlElement);
+        console.log(`control ${res ? 'is' : 'is NOT'} focused`);
+        return res;
+    }
+
+    /** @private */
+    _detachListeners () {
+        if (this._controlElement) {
+            this._controlElement.removeEventListener('blur', this._onCtrlBlur);
+            this._controlElement.removeEventListener('focus', this._onCtrlFocus);
+            this._controlElement.removeEventListener('keyup', this._onKeyUp);
+            this._controlElement.removeEventListener('mouseenter', this._onCtrlMouseEnter);
+            this._controlElement.removeEventListener('mouseleave', this._onCtrlMouseLeave);
+        }
+    }
+
+    /** @private */
+    _disableFocusEvents (target) {
+        console.log('disable focus events');
+        target.removeEventListener('blur', this._onCtrlBlur);
+        target.removeEventListener('focus', this._onCtrlFocus);
+    }
+
+    /** @private */
+    _disableMouseEvents (target) {
+        console.log('disable mouse events');
+        target.removeEventListener('mouseenter', this._onCtrlMouseEnter);
+        target.removeEventListener('mouseleave', this._onCtrlMouseLeave);
+    }
+
+    /** @private */
+    _enableFocusEvents (target) {
+        console.log('enable focus events');
+        target.addEventListener('focus', this._onCtrlFocus);
+    }
+
+    /** @private */
+    _enableMouseEvents (target) {
+        console.log('enable mouse events');
+        target.addEventListener('mouseenter', this._onCtrlMouseEnter);
+    }
+
+    /** @private */
+    _hide () {
+        console.log('_hide');
+        // cancel SHOW
+        clearTimeout(this._showTimeout);
+
+        if (this.open && !this._ctrlHasFocus) {
+            // clear old timeout (if it exists)
+            clearTimeout(this._hideTimeout);
+
+            // schedule HIDE
+            this._hideTimeout = setTimeout(() => {
+                this.open = false;
+            }, DELAY);
+        }
+    }
+
+    /** @private */
+    _makeControlAccessible () {
+        if (this._controlElement) {
+            this._controlElement.setAttribute('aria-describedby', this.id);
+
+            if (this._controlElement.tabIndex !== 0) {
+                this._controlElement.tabIndex = 0;
+            }
+        }
+    }
+
+    /** @private */
+    _onCtrlBlur (event) {
+        console.log('_onCtrlBlur');
+        event.target.removeEventListener('blur', this._onCtrlBlur);
+        event.target.addEventListener('focus', this._onCtrlFocus);
+        this._hide();
+        this._enableMouseEvents(event.target);
+    }
+
+    /** @private */
+    _onCtrlFocus (event) {
+        console.log('_onCtrlFocus');
+        event.target.removeEventListener('focus', this._onCtrlFocus);
+        event.target.addEventListener('blur', this._onCtrlBlur);
+        document.addEventListener('keyup', this._onKeyUp);
+        this._disableMouseEvents(event.target);
+        this._show();
+    }
+
+    /** @private */
+    _onCtrlMouseEnter (event) {
+        console.log('_onCtrlMouseEnter', event);
+        if (!this._ctrlHasFocus) {
+            event.target.removeEventListener('mouseenter', this._onCtrlMouseEnter);
+            event.target.addEventListener('mouseleave', this._onCtrlMouseLeave);
+            this._disableFocusEvents(event.target);
+            this._show();
+        }
+    }
+
+    /** @private */
+    _onCtrlMouseLeave (event) {
+        console.log('_onCtrlMouseLeave');
+        event.target.removeEventListener('mouseleave', this._onCtrlMouseLeave);
+        event.target.addEventListener('mouseenter', this._onCtrlMouseEnter);
+        this._hide();
+        this._enableFocusEvents(event.target);
+    }
+
+    /** @private */
+    _onDocumentScroll () {
+        this._reposition();
+    }
+
+    /** @private */
+    _onKeyUp (event) {
+        console.log('_onKeyUp');
+        if (event.keyCode === KEYS.Escape) {
+            this._enableFocusEvents(this._controlElement);
             this.open = false;
-        }, 1600);
-    }
-
-    /** @private */
-    _onShow () {
-        if (this._onHideTimer) {
-            clearTimeout(this._onHideTimer);
+            // remove itself on success
+            document.removeEventListener('keyup', this._onKeyUp);
         }
-        this._showTimer = setTimeout(() => {
-            this.open = true;
-        }, 500);
     }
 
     /** @private */
-    _onClick () {
-        this.open = !this.open;
+    _reposition () {
+        if (this.relativeElement) {
+            let data = getPositionWithArrow({
+                element: this,
+                reference: this.relativeElement,
+                position: this.position,
+            });
+
+            this.style.top = `${data.y}px`;
+            this.style.left = `${data.x}px`;
+            this._position = data.position;
+        }
     }
 
     /** @private */
-    _onDocumentClick (event) {
-        let inComponent = this.contains(event.target);
-        let inTarget = this._target.contains(event.target);
-        let isBackground = !inComponent && !inTarget;
+    _show () {
+        console.log('_show');
+        // cancel HIDE
+        clearTimeout(this._hideTimeout);
 
-        if (isBackground) {
-            this.open = false;
+        if (!this.open) {
+            // clear old timeout (if it exists)
+            clearTimeout(this._showTimeout);
+
+            // schedule SHOW
+            this._showTimeout = setTimeout(() => {
+                this.open = true;
+            }, DELAY);
         }
     }
 }
