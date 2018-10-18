@@ -1,4 +1,16 @@
 # HelixUI
+HelixUI is a Javascript UI library, created with custom elements to help you develop applications.
+
+[Homepage](https://rackerlabs.github.io/helix-ui/)
+
+## Documentation
+ * [Getting Started](https://rackerlabs.github.io/helix-ui/guides/getting-started/)
+
+ * [React Compatiblity](https://rackerlabs.github.io/helix-ui/guides/react-compatibility/)
+
+ * [Components](https://rackerlabs.github.io/helix-ui/components/accordions/)
+ 
+ * [Elements](https://rackerlabs.github.io/helix-ui/elements/hx-accordion/)
 
 ## Developer Setup
 
